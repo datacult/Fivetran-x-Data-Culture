@@ -71,7 +71,7 @@ async function apiResponse(state, secrets) {
         letitle: 'Data', // title or wikipedia article to get the log of updates for
         ledir: 'newer', // order of results - oldest first
         lestart: state.last_updated, // return only results after this date
-        lelimit: 2, // limit how many results to get any any one time
+        lelimit: 5, // limit how many results to get any any one time
         format: 'json' // format of data to return from the API
     }
 
