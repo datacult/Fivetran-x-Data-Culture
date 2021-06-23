@@ -15,7 +15,7 @@ let settings = {
     test: false, // true will run a single call to the function. false will continue to call until hasMore == false
     save: false, // save a local file of the results once sync has finished
     secrets: {
-        BASE_URL: process.env.BASE_URL, // add any environment variables here to be loaded in from .env file. This replicates the secrets passed from the Fivetran Custom Connector
+        BASE_URL: process.env.BASE_URL, // add any environment variables here to be loaded in from a .env file. This replicates the secrets passed from the Fivetran Custom Connector
     }
 }
 ```
