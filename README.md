@@ -14,9 +14,9 @@ Navigate to the directory of this custom function. run ```npm install```.
 The same process needs to be repeated in the ```fivetran_emulator``` folder (as they are designed to run independently).
 
 ## Links
-[Fivetran Custom Connector Setup](https://fivetran.com/docs/functions)
-[Data Culture](https://www.datacult.com/)
-[Fivetran](https://fivetran.com/)
+[Fivetran Custom Connector Setup](https://fivetran.com/docs/functions)  
+[Data Culture](https://www.datacult.com/)  
+[Fivetran](https://fivetran.com/)  
 
 ## Notes
 - ```index.js``` filename can be changed.
