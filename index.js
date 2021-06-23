@@ -45,7 +45,7 @@ async function update(state, secrets) {
     // fill out any default state for initial call
     if (Object.keys(state).length == 0) {
         state = {
-            last_updated: new Date(0).toISOString // if no last_update timestamp is provided, start from 01/01/1970
+            last_updated: new Date(0).toISOString() // if no last_update timestamp is provided, start from 01/01/1970
         }
     }
 
@@ -55,7 +55,7 @@ async function update(state, secrets) {
 
     // populate Fivetran structure
     fivetran_structure.state = stateUpdate
-    fivetran_structure.insert.projects = entries
+    fivetran_structure.insert.logevents = entries
     fivetran_structure.hasMore = more
 
     return (fivetran_structure);
@@ -68,11 +68,15 @@ async function apiResponse(state, secrets) {
     const params = {
         action: 'query',
         list: 'logevents', // type of data to return from the API
-        title: 'Data', // title or wikipedia article to get the log of updates for
+        letitle: 'Data', // title or wikipedia article to get the log of updates for
+        ledir: 'newer', // order of results - oldest first
         lestart: state.last_updated, // return only results after this date
-        lelimit: 10, // limit how many results to get any any one time
+        lelimit: 2, // limit how many results to get any any one time
         format: 'json' // format of data to return from the API
     }
+
+    // add pagination paramter if required
+    if (state.continue) params.lecontinue = state.continue
 
     /*
     --- API AUTHENTICATION ---
@@ -89,8 +93,15 @@ async function apiResponse(state, secrets) {
     */
 
     try {
+
+        /* 
+        --- API CALL ---
+        */
+
+        let api_call_timestamp = new Date().toISOString()
+
         // make request to API
-        const response = await axios.get(secrets.BASE_URL, {
+        const response = await axios.get(`${secrets.BASE_URL}`, {
             params: params,
             // headers: headers,
             // auth: auth
@@ -99,18 +110,37 @@ async function apiResponse(state, secrets) {
         let entries = []
 
         // check that the response is not empty
-        if (response.data.length > 0) {
-            
+        if (response.data.hasOwnProperty('query') && response.data.query.hasOwnProperty('logevents')) {
+
             response.data.query.logevents.forEach(d => {
                 // any required data manipulation can go here before pushing to data array
-                data.push(d)
+                entries.push(d)
             })
+
         }
 
+        /* 
+        --- PAGINATION & INCREMENTAL UPDATES ---
+        */
+
+        let hasMore = false
+
+        if (response.data.hasOwnProperty('continue')) {
+            state.continue = response.data.continue.lecontinue
+            hasMore = true
+        } else {
+            // updated the last_updated state to the time at the start of the API call (to ensure no updates are missed on the next call)
+            state.last_updated = api_call_timestamp
+            delete state.continue
+        }
+
+        /*
+        --- RETURN RESULTS ---
+        */
         return [
             entries,
             state, // updated state
-            false // hasMore flag
+            hasMore // hasMore flag
         ];
 
     } catch (error) {
