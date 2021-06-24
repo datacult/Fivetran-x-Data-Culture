@@ -154,7 +154,7 @@ try {
 }
 ```
 
-## Example workflow with incremental updates
+## Example Workflow with Incremental Updates
 
 ### Initial Call
 
@@ -178,7 +178,7 @@ new Date(0).toISOstring();
 - Update the `state` with new timestamp
 - Return the data from the API call & updated the `state` object
 
-## Example workflow with pagination
+## Example Workflow with Pagination
 
 *This can be combined with the incremental update workflow*  
   
