@@ -91,7 +91,7 @@ exports.handler = async (req, res) => {
 The state object is a json object that can be filled with any values that you may need to keep track of the progress of data ingestion. Popular variables to include in the state are a timestamp of the last ingestion (for incremental updates) or a pagination number (for paginated results).
 The state is stored by Fivetran and sent with each request to the custom function. When returning the response to Fivetran, the function includes an updates state object.
 
-_Hint: The state object is visible in the logs of the Fivetran UI, which is useful for tracking. It is therefore possible to add any error handling messages to the state if required._
+*Hint: The state object is visible in the logs of the Fivetran UI, which is useful for tracking. It is therefore possible to add any error handling messages to the state if required.*
 
 ### hasMore
 
@@ -166,20 +166,21 @@ new Date(0).toISOstring();
 ```
 
 - call api including a 'start from' date (this will vary dependent on the API)
-- update state with new timestamp _Hint: Capturing the timestamp directly before the API call will ensure any updates that happen during the time taken to make the API call are still gathered in the next request to the custom function_
+- update state with new timestamp 
+*Hint: Capturing the timestamp directly before the API call will ensure any updates that happen during the time taken to make the API call are still gathered in the next request to the custom function*
 - return the data from the API call & updated state object
 
 ### Subsequent Calls
 
 - state object will contain the time of the last request
 - call api including a 'start from' date (the date stored in the `state` object)
-  _This will provide only results after the previous API call_
+  *This will provide only results after the previous API call*
 - update state with new timestamp
 - return the data from the API call & updated state object
 
 ## Example workflow with pagination
 
-_This can be combined with the incremental update workflow_
+*This can be combined with the incremental update workflow*  
 API pagination is usually done using a limit and a page number, or offset number.
 `{limit:50, page:2}` would be the 51st record from the API query. This would be equal to `{limit:50, offset:50}`
 
