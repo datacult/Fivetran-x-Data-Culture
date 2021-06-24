@@ -158,36 +158,37 @@ try {
 
 ### Initial Call
 
-- state object is empty
-- fill state with starting date (beginning of EPOCH time should work)
+- State object is empty
+- Fill the `state` with a starting date (beginning of EPOCH time should work)
 
 ```javascript
 new Date(0).toISOstring();
 ```
 
-- call api including a 'start from' date (this will vary dependent on the API)
-- update state with new timestamp 
+- Call the API including a 'start from' date (this will vary dependent on the API)
+- Update state with new timestamp 
 *Hint: Capturing the timestamp directly before the API call will ensure any updates that happen during the time taken to make the API call are still gathered in the next request to the custom function*
-- return the data from the API call & updated state object
+- Return the data from the API call & updated the `state` object
 
 ### Subsequent Calls
 
-- state object will contain the time of the last request
-- call api including a 'start from' date (the date stored in the `state` object)
+- State object will contain the time of the last request
+- Call the API including a 'start from' date (the date stored in the `state` object)
   *This will provide only results after the previous API call*
-- update state with new timestamp
-- return the data from the API call & updated state object
+- Update the `state` with new timestamp
+- Return the data from the API call & updated the `state` object
 
 ## Example workflow with pagination
 
 *This can be combined with the incremental update workflow*  
+  
 API pagination is usually done using a limit and a page number, or offset number.
 `{limit:50, page:2}` would be the 51st record from the API query. This would be equal to `{limit:50, offset:50}`
 
-- state object is empty on initial call
-- fill state with starting page or offset of 0 if the state is empty
-- call api with limit value and page number
-  _alternatively the page number can be left out of the API call if it is not in the `state` object_
+- State object is empty on initial call
+- Fill the ```state``` with starting page or offset of 0 if the state is empty
+- Call api with limit value and page number
+  *alternatively the page number can be left out of the API call if it is not in the ```state``` object*
 - Check if the number of results returned from the API is equal to the limit (if it is there may be more results)
   - If number of results is equal to the limit, set the `hasMore` flag to true & increase state page number.
   - If number of results does not equal limit, set the `hasMore` flag to false and reset the state page number to 0
