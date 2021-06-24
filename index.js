@@ -53,11 +53,12 @@ async function update(state, secrets) {
     // Fetch records using api calls
     let [entries, stateUpdate, more] = await apiResponse(state, secrets);
 
-    // populate Fivetran structure
+    // populate Fivetran structure with the response from the API
     fivetran_structure.state = stateUpdate
     fivetran_structure.insert.logevents = entries
     fivetran_structure.hasMore = more
 
+    // return to handler
     return (fivetran_structure);
 
 }
@@ -75,7 +76,7 @@ async function apiResponse(state, secrets) {
         format: 'json' // format of data to return from the API
     }
 
-    // add pagination paramter if required
+    // add pagination parameter if required
     if (state.continue) params.lecontinue = state.continue
 
     /*
