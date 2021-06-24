@@ -35,7 +35,7 @@ The same process needs to be repeated in the `fivetran_emulator` folder (as they
 
 The handler is the entry point to the custom function. It does not have to be called `handler` and can be renamed, however this is the default name selected in AWS lambda. The handler is responsible for receiving variables from Fivetran and returning the completed response. The `request` parameter receives a json object in the format.
 
-```json
+```javascript
 {
   "secrets": {
     // Any secrets provided in the Fivetran UI during setup will be here
@@ -48,7 +48,7 @@ The handler is the entry point to the custom function. It does not have to be ca
 
 The response object needs to be in a Fivetran specific format.
 
-```json
+```javascript
 {
   "state": {},
   "insert": {
