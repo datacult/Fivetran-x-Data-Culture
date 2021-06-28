@@ -1,3 +1,8 @@
+/*
+Created by Neil Oliver for Data Culture
+http://www.datacult.com/
+*/
+
 const fs = require('fs');
 require('dotenv').config()
 const JSONStream = require('JSONStream');
@@ -21,7 +26,7 @@ let settings = {
 --- CONTINUOUS SYNC ---
 Will persistently call custom function until hasMore: false is received. 
 */
-const sync = async (func, state = {}, secrets = settings.secrets, data={}) => {
+const sync = async (func, state = {}, secrets = settings.secrets, data = {}) => {
 
     if (settings.type == 'lambda') {
 
@@ -33,24 +38,28 @@ const sync = async (func, state = {}, secrets = settings.secrets, data={}) => {
             null,
             (error, response) => {
 
-                if (Object.values(response.state) != Object.values(state)) {
-                    console.log(chalk.blue('state updated to: '), response.state)
-                }
-
-                for (key in response.insert) {
-                    console.log(chalk.blue(`${response.insert[key].length} records received to insert into ${key} table.`))
-                    if (!data.hasOwnProperty(key)) data[key] = []
-                    data[key] = [...data[key], ...response.insert[key]]
-                }
-
-                if (response.hasMore == true) {
-                    sync(func, response.state, settings.secrets, data)
+                if (error || response.hasOwnProperty("errorMessage")) {
+                    if (error) console.log(error)
+                    if (response.hasOwnProperty("errorMessage")) console.log(response)
                 } else {
-                    console.log(chalk.blue('sync complete'))
-                    if(settings.save == true) save_response(data)
+                    if (Object.values(response.state) != Object.values(state)) {
+                        console.log(chalk.blue('state updated to: '), response.state)
+                    }
+
+                    for (key in response.insert) {
+                        console.log(chalk.blue(`${response.insert[key].length} records received to insert into ${key} table.`))
+                        if (!data.hasOwnProperty(key)) data[key] = []
+                        data[key] = [...data[key], ...response.insert[key]]
+                    }
+
+                    if (response.hasMore == true) {
+                        sync(func, response.state, settings.secrets, data)
+                    } else {
+                        console.log(chalk.blue('sync complete'))
+                        if (settings.save == true) save_response(data)
+                    }
                 }
 
-                if (error) console.log(error)
             }
         )
     } else {
@@ -63,7 +72,7 @@ const sync = async (func, state = {}, secrets = settings.secrets, data={}) => {
 --- SAVE RESPONSE ---
 Save response as a .json file if the settings.save flag is true
 */
-function save_response(data){
+function save_response(data) {
     if (Object.keys(data).length > 0) {
         var transformStream = JSONStream.stringify();
         var outputStream = fs.createWriteStream(__dirname + `/data_download_${new Date().toISOString()}.json`);
@@ -96,8 +105,13 @@ const test = async (func, state = {}, secrets = settings.secrets) => {
             },
             null,
             (error, response) => {
-                console.log(JSON.parse(response))
-                if (error) console.log(error)
+                if (error || response.hasOwnProperty("errorMessage")) {
+                    if (error) console.log(error)
+                    if (response.hasOwnProperty("errorMessage")) console.log(response)
+                } else {
+                    console.log(response)
+                }
+
             }
         )
     } else {

@@ -1,8 +1,20 @@
 /*
+Created by Neil Oliver for Data Culture
+http://www.datacult.com/
+*/
+
+
+/*
+--- DEPENDENCIES ---
 Axios is a simple HTTP request package which can be easily adapted to call most REST OR GraphQL endpoints.
 For more complex APIs there may be additional libraries in the npm package library (https://www.npmjs.com/) that may be helpful.
 */
 const axios = require('axios');
+
+
+/*
+--- ENTRY POINT ---
+*/
 
 // lambda entry point for the function
 exports.handler = async (request, context, callback) => {
@@ -23,7 +35,9 @@ exports.handler = async (req, res) => {
 */
 
 
-// Builds the data into the FiveTran required format
+/*
+--- FIVETRAN DATA STRUCTURE WRANGLING ---
+*/
 async function update(state, secrets) {
 
     // Note: 'logevents' is the table name and can be changed. multiple tables can be updated in the same call
@@ -50,19 +64,31 @@ async function update(state, secrets) {
     }
 
 
-    // Fetch records using api calls
-    let [entries, stateUpdate, more] = await apiResponse(state, secrets);
+    // Fetch data using an api call
+    let response = await apiResponse(state, secrets);
+    
+    // check if apiReponse function returned an array (results) or object (error)
+    if (Array.isArray(response)) {
+        
+        let [entries, stateUpdate, more] = response
+        
+        // populate Fivetran structure with the response from the API
+        fivetran_structure.state = stateUpdate
+        fivetran_structure.insert.logevents = entries
+        fivetran_structure.hasMore = more
 
-    // populate Fivetran structure with the response from the API
-    fivetran_structure.state = stateUpdate
-    fivetran_structure.insert.logevents = entries
-    fivetran_structure.hasMore = more
+        // return to handler
+        return (fivetran_structure);
 
-    // return to handler
-    return (fivetran_structure);
+    } else {
+        return response
+    }
 
 }
 
+/*
+--- API CALL ---
+*/
 async function apiResponse(state, secrets) {
 
     // params from https://en.wikipedia.org/w/api.php?action=help&modules=query%2Blogevents
@@ -148,6 +174,11 @@ async function apiResponse(state, secrets) {
         // If the axios call fails, an error is thrown. These console log messages will appear in the AWS Lamdba or Google Cloud Function logs.
         console.log("error: ", error);
         console.log("state: ", state)
+
+        //return the error to Fivetran to be reported in the Fivetran UI
+        return {
+            "errorMessage": error
+        }
     }
 
 }
