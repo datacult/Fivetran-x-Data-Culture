@@ -7,6 +7,21 @@ This repo is part of the [Fivetran x Data Culture collaboration event](https://w
 This is an example function written in [node.js](https://nodejs.org/en/) for use with Fivetran's custom connector feature.
 The example uses the [Wikipedia API](https://en.wikipedia.org/w/api.php) to call an initial dataset and maintain continuous updates; however the template is designed to be easily adaptable for any data source including both REST and GraphQL types.
 
+## Table of Contents
+- [Function Testing - Fivetran Emulator](#function-testing---fivetran-emulator)
+- [Installation](#installation)
+
+- [Code Explanation](#code-explanation)
+  - [Handler](#handler)
+  - [State](#state)
+  - [hasMore](#hasmore)
+  - [API Call](#api-call)
+    - [Example Workflow with Incremental Updates](#example-workflow-with-incremental-updates)
+    - [Example Workflow with Pagination](#example-workflow-with-pagination) 
+
+- [Notes](#notes)  
+- [Links](#links)  
+
 ## Function Testing - Fivetran Emulator
 
 The Fivetran emulator function is designed to replicate the Fivetran custom connector on a _basic_ level. No ingestion is passed to Fivetran through this emulator and no scheduling takes place. It can be used to observe the output (via console logs) of the custom function and test the `hasMore` feature. The emulator can be used to save data to a `.json` file for data quality checks. Details of how to use the emulator are in the [emulator readme.md](./fivetran_emulator/README.md)
@@ -209,5 +224,6 @@ if (response.data.hasOwnProperty('continue')) { // the continue property is only
 ## Links
 
 [Fivetran Custom Connector Setup](https://fivetran.com/docs/functions)  
+[Fivetran Sample Custom Lamdba Function](https://github.com/fivetran/functions/blob/master/api/aws_lambda/index.js)
 [Data Culture](https://www.datacult.com/)  
 [Fivetran](https://fivetran.com/)
