@@ -95,10 +95,6 @@ def handler(request):
 	return fivertran_format
 
 
-	#except:
-	#	print("error")
-	#	print("state", state )
-
 # make a call to handler
 handler({
         "secrets" : {"BASE_URL": "https://en.wikipedia.org/w/api.php" },
