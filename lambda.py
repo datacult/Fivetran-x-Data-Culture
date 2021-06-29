@@ -27,7 +27,7 @@ def handler(request):
 		"schema" : {
 			"logevents": {
                 		"primary_key": ["log_id"]
-            },
+            	},
 		},
 		"hasMore" : False
 	}
@@ -90,7 +90,6 @@ def handler(request):
 	fivertran_format['state'] = state
 	fivertran_format['hasMore'] = hasMore
 
-	print(json.dumps(fivertran_format))
 	# Return to Fivetran 
 	return fivertran_format
 
